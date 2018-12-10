@@ -3,14 +3,16 @@ from datetime import datetime
 
 from requests_html import AsyncHTMLSession, HTMLSession
 
+from config import PAGE_INTERVAL, ItemInfo, TypeAnno, User, user_id
+from mongo import do_insert, init_db
 from parses import (get_comment, get_date, get_item_count, get_movie_title,
                     get_rating, get_tags)
 
-Base_URL = 'https://movie.douban.com/people/guessme/collect?start='
+Base_URL = 'https://movie.douban.com/people/%s/collect?start=' % User.id_
 asyncss = AsyncHTMLSession()
 
 
-def parse_movie(item):
+def parse_movie(item: TypeAnno.Element)-> ItemInfo:
     """
     Parse one movie info.
     """
@@ -33,13 +35,13 @@ async def get_movies(url: str, is_first=False):
     """
     Get all movies in one page.
     """
-    resp = await asyncss.get(url)
+    resp = await asyncss.get(url)  # type: TypeAnno.HTMLResponse
     if is_first and not User.movie_pages:
         User.movie_pages = get_item_count(resp)
 
-    movie_list = resp.html.find('.item')
+    movie_list = resp.html.find('.item')  # type: TypeAnno.Elements
     for movie in movie_list:
-        movieinfo = parse_movie(movie)
+        movieinfo = parse_movie(movie)  # type: ItemInfo
         await do_insert(movieinfo)
 
 
@@ -58,4 +60,5 @@ def main():
 
 
 if __name__ == '__main__':
+    init_db('Movie1')
     main()
