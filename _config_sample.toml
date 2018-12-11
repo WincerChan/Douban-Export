@@ -1,0 +1,11 @@
+doubanid = "guessme"
+
+[Book]
+  MaxLimit = 4
+
+[Movie]
+  MaxLimit = 0
+
+[DataBase]
+  ip = "127.0.0.1"
+  port = 27017
