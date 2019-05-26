@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from config import TypeAnno
@@ -32,6 +31,12 @@ def get_comment(item: TypeAnno.Element) -> list:
     return item.xpath(
         '//*[@class="comment"]/text()',
         first=True
+    )
+
+
+def get_url(item: TypeAnno.Element) -> str:
+    return item.xpath(
+        '//a/@href', first=True
     )
 
 

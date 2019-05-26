@@ -35,6 +35,7 @@ async def do_insert(item: ItemInfo) -> None:
     try:
         result = await DBHelper.collection.insert_one(doc)
     except DuplicateKeyError:
+        print(item)
         print("{} 该信息已插入...".format(item.title))
         # exit()
     else:
