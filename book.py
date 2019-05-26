@@ -27,7 +27,9 @@ def parse_book(item: TypeAnno.Element) -> ItemInfo:
 
     tags = get_tags(item)  # type: list
 
-    return ItemInfo(title, cover, date, rating, comment, tags)
+    url = item.xpath('//a/@href', first=True)  # type: str
+
+    return ItemInfo(title, cover, date, rating, comment, tags, url)
 
 
 async def get_books(url: str, is_first=False):
@@ -60,5 +62,5 @@ def main():
 
 
 if __name__ == '__main__':
-    init_db('Book1')
+    init_db('Book')
     main()

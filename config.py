@@ -1,7 +1,7 @@
 from collections import namedtuple
 from toml import load
 
-ItemInfo = namedtuple('iteminfo', "title cover date rating comment tags")
+ItemInfo = namedtuple('iteminfo', "title cover date rating comment tags url")
 config = load('_config.toml')
 
 PAGE_INTERVAL = 15
