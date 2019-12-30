@@ -9,6 +9,8 @@ motor = "*"
 pymongo = "*"
 ptpython = "*"
 toml = "*"
+tortoise-orm = "*"
+asyncpg = "*"
 
 [dev-packages]
 "pep8" = "*"
@@ -17,4 +19,4 @@ pylint = "*"
 rope = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"
