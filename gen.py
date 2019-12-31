@@ -1,36 +1,39 @@
 # -*- coding: utf-8 -*-
 
-from pymongo import MongoClient
+import asyncio
+import json
 from datetime import datetime
 
-client = MongoClient()
-db = client.douban
-this_year = datetime(2019, 1, 1)
+import asyncpg
+
+from models import Item
+from pg import connect_pg, fetch_item
+
+this_year = f'{datetime.now().year}-01-01'
 
 items = []
 
 
-def gen_item(book_or_movie, tp):
-    for item in book_or_movie.find({"date": {"$gte": this_year}}):
-        item['tips'] = "读过" if tp == "book" else "看过"
-        if tp == "book":
-            item['cover'] = ('https://img1.d'
-                           'oubanio.com/lpic/') + item['cover'].split('/')[-1]
-        items.append(item)
+async def gen_item(con):
+    for item in await con.fetch(f"select category, info from item where info->>'date' > '{this_year}' order by info->>'date' DESC;"):
+        info = json.loads(item.get('info'))
+        category = item.get('category')
+        info['tips'] = "读过" if category == "book" else "看过"
+        if category == "book":
+            info['cover'] = f"https://img1.doubanio.com/lpic/{info['cover'].split('/')[-1]}"
+        items.append(info)
 
 
 def fmt_output():
-    opt = "{{% figure '{}' '{}' '{}' '{}' %}}"
     for item in items:
-        print(opt.format(item['cover'], item['title'],
-                         item['url'],
-                         item['date'].strftime('%Y-%m-%d ') + item['tips']))
+        print(f"{{% figure '{item['cover']}' '{item['title']}' "
+              f"'{item['url']}' '{item['date'].split(' ')[0]} {item['tips']}' %}}")
 
+
+async def main():
+    con = await asyncpg.connect(user='postgres', database='douban')
+    await gen_item(con)
+    fmt_output()
 
 if __name__ == "__main__":
-    movies = db.Movie
-    books = db.Book
-    gen_item(movies, 'movie')
-    gen_item(books, 'book')
-    items.sort(key=lambda x: x['date'], reverse=True)
-    fmt_output()
+    asyncio.run(main())
