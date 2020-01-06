@@ -16,7 +16,6 @@ defmodule DoubanShow do
   @doubanid Application.get_env(:douban_show, :doubanid)
   def concat_url(num) do
     "https://movie.douban.com/people/#{@doubanid}/collect?start=#{num * @internel}"
-    |> IO.puts()
   end
 
   def crawler() do
