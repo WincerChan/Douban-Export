@@ -1,4 +1,4 @@
-defmodule DoubanShowDup.MixProject do
+defmodule DoubanShow.MixProject do
   use Mix.Project
 
   def project do
@@ -15,7 +15,7 @@ defmodule DoubanShowDup.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {DoubanShowDup.Application, []}
+      mod: {DoubanShow.Application, []}
     ]
   end
 

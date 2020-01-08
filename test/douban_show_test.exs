@@ -1,8 +1,8 @@
-defmodule DoubanShowDupTest do
+defmodule DoubanShowTest do
   use ExUnit.Case
-  doctest DoubanShowDup
+  doctest DoubanShow
 
   test "greets the world" do
-    assert DoubanShowDup.hello() == :world
+    assert DoubanShow.hello() == :world
   end
 end

@@ -1,4 +1,4 @@
-defmodule DoubanShowDup.Database do
+defmodule DoubanShow.Database do
   use GenServer
 
   def gen_pid do

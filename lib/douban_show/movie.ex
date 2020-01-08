@@ -1,5 +1,5 @@
-defmodule DoubanShowDup.Movie do
-  import DoubanShowDup
+defmodule DoubanShow.Movie do
+  import DoubanShow
   use GenServer
 
   @internel 15

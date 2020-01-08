@@ -1,6 +1,6 @@
-defmodule DoubanShowDup do
+defmodule DoubanShow do
   @moduledoc """
-  Documentation for DoubanShowDup.
+  Documentation for DoubanShow.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule DoubanShowDup do
 
   ## Examples
 
-      iex> DoubanShowDup.hello()
+      iex> DoubanShow.hello()
       :world
 
   """

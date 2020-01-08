@@ -1,4 +1,4 @@
-# DoubanShowDup
+# DoubanShow
 
 **TODO: Add description**
 
