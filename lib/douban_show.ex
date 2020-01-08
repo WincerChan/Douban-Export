@@ -12,29 +12,27 @@ defmodule DoubanShow do
       :world
 
   """
-  @internel 15
-  @doubanid Application.get_env(:douban_show, :doubanid)
-  def concat_url(num) do
-    "https://movie.douban.com/people/#{@doubanid}/collect?start=#{num * @internel}"
+  def parse_content(url) do
+    IO.puts(url) |> mute_output
+    case HTTPoison.get(url) do
+        {:ok, %HTTPoison.Response{
+            status_code: 200, body: body}} ->
+            Floki.parse_document(body)
+        _ ->
+            Floki.parse_document("")
+    end
+    |> elem(1)
   end
 
-  def crawler() do
-    IO.puts("Starting ...")
-
-    0..21
-    |> Enum.map(&concat_url/1)
-    |> Enum.map(&Task.async(fn -> Movie.fetch(&1) end))
-    |> Task.yield_many()
-
-    IO.puts("Done.")
+  def mute_output(_) do
   end
 
-  def start(_type, _args) do
-    :timer.sleep(5000)
-    Database.init()
-    # crawler()
-    concat_url(0)
-    # return self pid to supervisor
-    {:ok, self()}
+  def decr(num) do
+    num-1
+  end
+
+  def concat_tuple(value, field) do
+    # Know that params position
+    {field, value}
   end
 end
