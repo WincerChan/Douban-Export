@@ -10,7 +10,8 @@ defmodule DoubanShow.Application do
       # Starts a worker by calling: DoubanShow.Worker.start_link(arg)
       # {DoubanShow.Worker, arg}
       DoubanShow.Database,
-      DoubanShow.Movie
+      DoubanShow.Book
+      # DoubanShow.Movie
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

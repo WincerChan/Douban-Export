@@ -12,14 +12,68 @@ defmodule DoubanShow do
       :world
 
   """
+  @internel 15
+  @douban_id Application.get_env(:douban_show, :doubanid)
+  def concat_url(category, num) do
+    "https://#{category}.douban.com/people/#{@douban_id}/collect?start=#{num * @internel}"
+  end
+
+  def fetch_pages(category) do
+    concat_url(category, 0)
+    |> parse_content
+    |> Floki.find(".paginator > a:last-of-type")
+    |> Floki.text(deep: false)
+    |> String.to_integer()
+    |> decr
+  end
+
+  def url(movie_item) do
+    movie_item
+    |> Floki.find(".nbg")
+    |> Floki.attribute("href")
+    |> Floki.text(deep: false)
+    |> make_tuple(:url)
+  end
+
+  def tags(movie_item) do
+    movie_item
+    |> Floki.find(".tags")
+    |> Floki.text(deep: false)
+    |> String.split(" ")
+    |> tl
+    |> make_tuple(:tags)
+  end
+
+  def cover(movie_item) do
+    movie_item
+    |> Floki.find("img")
+    |> Floki.attribute("src")
+    |> hd
+    |> make_tuple(:cover)
+  end
+
+  def get_rating(rating_str) do
+    if rating_str != nil do
+      String.to_integer(rating_str)
+    end
+  end
+
+  def comment(movie_item) do
+    movie_item
+    |> Floki.find(".comment")
+    |> Floki.text(deep: false)
+    |> make_tuple(:comment)
+  end
+
   def parse_content(url) do
     IO.puts(url) |> mute_output
-    case HTTPoison.get(url) do
-        {:ok, %HTTPoison.Response{
-            status_code: 200, body: body}} ->
-            Floki.parse_document(body)
-        _ ->
-            Floki.parse_document("")
+
+    case HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]]) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        Floki.parse_document(body)
+
+      _ ->
+        Floki.parse_document("")
     end
     |> elem(1)
   end
@@ -28,10 +82,10 @@ defmodule DoubanShow do
   end
 
   def decr(num) do
-    num-1
+    num - 1
   end
 
-  def concat_tuple(value, field) do
+  def make_tuple(value, field) do
     # Know that params position
     {field, value}
   end
