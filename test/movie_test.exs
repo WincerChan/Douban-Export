@@ -9,8 +9,8 @@ defmodule MovieTest do
     assert Movie.get_rating("4") == 4
   end
 
-  test "get concat_tuple" do
-    assert Movie.concat_tuple(:title, "Hello") ==
+  test "get make_tuple" do
+    assert Movie.make_tuple(:title, "Hello") ==
              {"Hello", :title}
   end
 end
