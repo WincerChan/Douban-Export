@@ -15,7 +15,8 @@ defmodule DoubanShow.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {DoubanShow.Application, []}
+      mod: {DoubanShow.Application, []},
+      included_applications: [:mnesia]
     ]
   end
 
