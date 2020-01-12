@@ -18,9 +18,8 @@ defmodule DoubanShow.Book do
     book_item
     |> Floki.find(".date")
     |> Floki.text(deep: false)
-    |> String.split(" ")
+    |> String.split("\n")
     |> hd
-    |> make_tuple(:date)
   end
 
   def title(book_item) do
@@ -36,7 +35,6 @@ defmodule DoubanShow.Book do
       |> Floki.text(deep: false)
 
     "#{main}#{slave}"
-    |> make_tuple(:title)
   end
 
   def rating(book_item) do
@@ -46,13 +44,11 @@ defmodule DoubanShow.Book do
     |> Floki.text(deep: false)
     |> String.at(6)
     |> get_rating
-    |> make_tuple(:rating)
   end
 
   def parse(m) do
-    [url(m), date(m), tags(m), title(m), cover(m), rating(m), comment(m)]
-    |> Map.new()
-    |> IO.inspect()
+    ["book", url(m), date(m), tags(m), title(m), cover(m), rating(m), comment(m)]
+    |> DoubanShow.Persist.save_record
   end
 
   def fetch(url) do
