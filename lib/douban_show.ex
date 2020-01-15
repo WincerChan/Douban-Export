@@ -12,14 +12,13 @@ defmodule DoubanShow do
       :world
 
   """
-  @internel 15
   @douban_id Application.get_env(:douban_show, :doubanid)
-  def concat_url(category, num) do
-    "https://#{category}.douban.com/people/#{@douban_id}/collect?start=#{num * @internel}"
+  def concat_url_by_type(category) do
+    "https://#{category}.douban.com/people/#{@douban_id}/collect"
   end
 
   def fetch_pages(category) do
-    concat_url(category, 0)
+    concat_url_by_type(category)
     |> parse_content
     |> Floki.find(".paginator > a:last-of-type")
     |> Floki.text(deep: false)
@@ -32,7 +31,6 @@ defmodule DoubanShow do
     |> Floki.find(".nbg")
     |> Floki.attribute("href")
     |> Floki.text(deep: false)
-    |> make_tuple(:url)
   end
 
   def tags(movie_item) do
@@ -41,7 +39,6 @@ defmodule DoubanShow do
     |> Floki.text(deep: false)
     |> String.split(" ")
     |> tl
-    |> make_tuple(:tags)
   end
 
   def cover(movie_item) do
@@ -49,7 +46,6 @@ defmodule DoubanShow do
     |> Floki.find("img")
     |> Floki.attribute("src")
     |> hd
-    |> make_tuple(:cover)
   end
 
   def get_rating(rating_str) do
@@ -62,31 +58,25 @@ defmodule DoubanShow do
     movie_item
     |> Floki.find(".comment")
     |> Floki.text(deep: false)
-    |> make_tuple(:comment)
   end
 
   def parse_content(url) do
-    IO.puts(url) |> mute_output
-
-    case HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]]) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Floki.parse_document(body)
-
-      _ ->
-        Floki.parse_document("")
-    end
+    HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]])
+    |> get_resp
     |> elem(1)
+  end
+
+  defp get_resp({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    Floki.parse_document(body)
+  end
+
+  defp get_resp(_) do
+    Floki.parse_document("")
   end
 
   def mute_output(_) do
   end
 
-  def decr(num) do
-    num - 1
-  end
+  def decr(num), do: num - 1
 
-  def make_tuple(value, field) do
-    # Know that params position
-    {field, value}
-  end
 end
