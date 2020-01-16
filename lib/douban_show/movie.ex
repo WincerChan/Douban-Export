@@ -50,8 +50,9 @@ defmodule DoubanShow.Movie do
   end
 
   def start do
-    0..fetch_pages("movie")
-    |> Enum.map(&concat_url/1)
+    # 0..fetch_pages("movie")
+    0..0
+    |> Stream.map(&concat_url/1)
     |> Enum.map(&Task.async(fn -> fetch(&1) end))
     |> Task.yield_many()
   end
