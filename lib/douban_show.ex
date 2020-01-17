@@ -22,8 +22,16 @@ defmodule DoubanShow do
     |> parse_content
     |> Floki.find(".paginator > a:last-of-type")
     |> Floki.text(deep: false)
-    |> String.to_integer()
+    |> to_integer
     |> decr
+  end
+
+  defp to_integer("") do
+    0
+  end
+
+  defp to_integer(str) do
+    String.to_integer(str)
   end
 
   def url(movie_item) do
