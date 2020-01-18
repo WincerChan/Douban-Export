@@ -26,7 +26,7 @@ defmodule DoubanShow do
     |> decr
   end
 
-  defp to_integer("") do
+  defp to_integer(nil) do
     0
   end
 
@@ -57,9 +57,7 @@ defmodule DoubanShow do
   end
 
   def get_rating(rating_str) do
-    if rating_str != nil do
-      String.to_integer(rating_str)
-    end
+    to_integer(rating_str)
   end
 
   def comment(movie_item) do
