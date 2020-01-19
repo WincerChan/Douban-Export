@@ -25,7 +25,6 @@ defmodule DoubanShow.Movie do
     movie_item
     |> Floki.find(".date")
     |> Floki.text(deep: false)
-    |> make_tuple(:date)
   end
 
   def title(movie_item) do
@@ -34,7 +33,6 @@ defmodule DoubanShow.Movie do
     |> Floki.text(deep: false)
     |> String.split(" / ")
     |> hd
-    |> make_tuple(:title)
   end
 
   def rating(movie_item) do
@@ -44,13 +42,11 @@ defmodule DoubanShow.Movie do
     |> Floki.text(deep: false)
     |> String.at(6)
     |> get_rating
-    |> make_tuple(:rating)
   end
 
   def parse(m) do
-    [url(m), date(m), tags(m), title(m), cover(m), rating(m), comment(m)]
-    |> Map.new()
-    |> IO.inspect()
+    ["movie", url(m), date(m), tags(m), title(m), cover(m), rating(m), comment(m)]
+    |> DoubanShow.Persist.save_record
   end
 
   def start do

@@ -9,9 +9,9 @@ defmodule DoubanShow.Application do
     children = [
       # Starts a worker by calling: DoubanShow.Worker.start_link(arg)
       # {DoubanShow.Worker, arg}
-      DoubanShow.Database,
+      DoubanShow.Persist,
+      DoubanShow.Movie,
       DoubanShow.Book
-      # DoubanShow.Movie
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
