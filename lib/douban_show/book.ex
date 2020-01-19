@@ -60,7 +60,7 @@ defmodule DoubanShow.Book do
 
   def start do
     0..fetch_pages("book")
-    |> Enum.map(&concat_url/1)
+    |> Stream.map(&concat_url/1)
     |> Enum.map(&Task.async(fn -> fetch(&1) end))
     |> Task.yield_many()
   end
