@@ -68,6 +68,7 @@ defmodule DoubanShow.Book do
   def init(state) do
     IO.puts("Starting...")
     start()
+    DoubanShow.Persist.close()
     IO.puts("Done.")
     {:ok, state}
   end

@@ -23,3 +23,5 @@ erl_crash.dump
 douban_show-*.tar
 
 /Mnesia.nonode@nohost/
+
+.DS_Store
