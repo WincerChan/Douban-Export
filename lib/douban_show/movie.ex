@@ -45,7 +45,16 @@ defmodule DoubanShow.Movie do
   end
 
   def parse(m) do
-    ["movie", url(m), date(m), tags(m), title(m), cover(m), rating(m), comment(m)]
+    DoubanItem.new
+    |> DoubanItem.put(comment(m))
+    |> DoubanItem.put(rating(m))
+    |> DoubanItem.put(cover(m))
+    |> DoubanItem.put(title(m))
+    |> DoubanItem.put(tags(m))
+    |> DoubanItem.put(date(m))
+    |> DoubanItem.put(url(m))
+    |> DoubanItem.put("movie")
+    |> DoubanItem.make_id
     |> DoubanShow.Persist.save_record
   end
 

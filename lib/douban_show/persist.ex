@@ -17,8 +17,7 @@ defmodule DoubanShow.Persist do
   end
 
   def do_save(item) do
-    id = :crypto.hash(:md5, "#{item |> Enum.at(2)}#{item |> Enum.at(4)}" |> IO.inspect)
-    [@table | [id | item]]
+    [@table | item]
     |> List.to_tuple
     |> Mnesia.write
   end
@@ -29,6 +28,7 @@ defmodule DoubanShow.Persist do
       do_save(item)
       end
     )
+    |> IO.inspect
   end
 
   def start_link(_) do
