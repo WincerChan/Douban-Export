@@ -25,6 +25,7 @@ defmodule DoubanShow.Movie do
     movie_item
     |> Floki.find(".date")
     |> Floki.text(deep: false)
+    |> Date.from_iso8601!
   end
 
   def title(movie_item) do
@@ -45,7 +46,7 @@ defmodule DoubanShow.Movie do
   end
 
   def parse(m) do
-    DoubanItem.new
+    DoubanItem.new()
     |> DoubanItem.put(comment(m))
     |> DoubanItem.put(rating(m))
     |> DoubanItem.put(cover(m))
@@ -54,8 +55,8 @@ defmodule DoubanShow.Movie do
     |> DoubanItem.put(date(m))
     |> DoubanItem.put(url(m))
     |> DoubanItem.put("movie")
-    |> DoubanItem.make_id
-    |> DoubanShow.Persist.save_record
+    |> DoubanItem.make_id()
+    |> DoubanShow.Persist.save_record()
   end
 
   def start do
