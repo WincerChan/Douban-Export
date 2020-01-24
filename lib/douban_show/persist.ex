@@ -5,30 +5,34 @@ defmodule DoubanShow.Persist do
 
   @table :douban
   @attributes [
-    :id, :category, :url,
-    :date, :tags, :title,
-    :cover, :rating, :comment
+    :id,
+    :category,
+    :url,
+    :date,
+    :tags,
+    :title,
+    :cover,
+    :rating,
+    :comment
   ]
   def init_mnesia do
     Mnesia.create_schema([node()])
     Mnesia.start()
-    Mnesia.create_table(@table, [attributes: @attributes, disc_only_copies: [node()]])
+    Mnesia.create_table(@table, attributes: @attributes, disc_only_copies: [node()])
     Mnesia.wait_for_tables([@table], 5000)
   end
 
   def do_save(item) do
     [@table | item]
-    |> List.to_tuple
-    |> Mnesia.write
+    |> List.to_tuple()
+    |> Mnesia.write()
   end
 
   def save_record(item) do
-    Mnesia.transaction(
-      fn ->
+    Mnesia.transaction(fn ->
       do_save(item)
-      end
-    )
-    |> IO.inspect
+    end)
+    |> IO.inspect()
   end
 
   def start_link(_) do
@@ -44,5 +48,4 @@ defmodule DoubanShow.Persist do
   def close do
     Mnesia.stop()
   end
-
 end
