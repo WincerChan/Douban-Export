@@ -20,7 +20,6 @@ defmodule DoubanShow.Book do
     |> Floki.text(deep: false)
     |> String.split("\n")
     |> hd
-    |> Date.from_iso8601!
   end
 
   def title(book_item) do

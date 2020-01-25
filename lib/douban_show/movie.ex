@@ -25,7 +25,6 @@ defmodule DoubanShow.Movie do
     movie_item
     |> Floki.find(".date")
     |> Floki.text(deep: false)
-    |> Date.from_iso8601!
   end
 
   def title(movie_item) do
