@@ -47,7 +47,7 @@ defmodule DoubanShow.Book do
   end
 
   def parse(m) do
-    DoubanItem.new
+    DoubanItem.new()
     |> DoubanItem.put(comment(m))
     |> DoubanItem.put(rating(m))
     |> DoubanItem.put(cover(m))
@@ -56,8 +56,8 @@ defmodule DoubanShow.Book do
     |> DoubanItem.put(date(m))
     |> DoubanItem.put(url(m))
     |> DoubanItem.put("book")
-    |> DoubanItem.make_id
-    |> DoubanShow.Persist.save_record
+    |> DoubanItem.make_id()
+    |> DoubanShow.Persist.save_record()
   end
 
   def fetch(url) do

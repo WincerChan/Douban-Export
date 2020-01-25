@@ -30,6 +30,10 @@ defmodule DoubanShow do
     0
   end
 
+  defp to_integer("") do
+    0
+  end
+
   defp to_integer(str) do
     String.to_integer(str)
   end
@@ -84,5 +88,4 @@ defmodule DoubanShow do
   end
 
   def decr(num), do: num - 1
-
 end
