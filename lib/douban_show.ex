@@ -12,80 +12,47 @@ defmodule DoubanShow do
       :world
 
   """
-  @douban_id Application.get_env(:douban_show, :doubanid)
-  def concat_url_by_type(category) do
-    "https://#{category}.douban.com/people/#{@douban_id}/collect"
+  def start do
+    # GenServer.start_link(__MODULE__, nil, __MODULE__)
+    GenServer.start(DoubanShow, nil)
   end
 
-  def fetch_pages(category) do
-    concat_url_by_type(category)
-    |> parse_content
-    |> Floki.find(".paginator > a:last-of-type")
-    |> Floki.text(deep: false)
-    |> to_integer
-    |> decr
+  def init(_) do
+    # send(self(), :real_init)
+    {:ok, nil}
   end
 
-  defp to_integer(nil) do
-    0
+  def handle_info(:real_init, _) do
+    IO.puts("START")
   end
 
-  defp to_integer("") do
-    0
+  def server_process(server_pid, category) do
+    GenServer.call(server_pid, {:douban_process, category})
   end
 
-  defp to_integer(str) do
-    String.to_integer(str)
+  def start_fetch(server_pid, {module_info, num}) do
+    GenServer.cast(server_pid, {:page, module_info, num})
   end
 
-  def url(movie_item) do
-    movie_item
-    |> Floki.find(".nbg")
-    |> Floki.attribute("href")
-    |> Floki.text(deep: false)
+  # 这个地方应该接受两个参数：category（book or movie），page（0，1，2）
+  # 这个地方应该还是一个参数，返回一个 pid，
+  # 但是这个 pid 是一个 process，通过 cast 来接受 url
+  def handle_call({:douban_process, category}, _, state) do
+    IO.puts("JFHJSDHGFJD")
+    case category do
+      :movie ->
+        {:ok, movie_pid} = DoubanShow.Movie.start
+        {:reply, {DoubanShow.Movie, movie_pid}, state}
+      :book ->
+        {:ok, book_pid} = DoubanShow.Book.start
+        {:reply, {DoubanShow.Book, book_pid}, state}
+    end
   end
 
-  def tags(movie_item) do
-    movie_item
-    |> Floki.find(".tags")
-    |> Floki.text(deep: false)
-    |> String.split(" ")
-    |> tl
+  def handle_cast({:page, {module, pid}, num}, state) do
+    spawn(fn ->
+      module.fetch({pid, num})
+    end)
+    {:noreply, state}
   end
-
-  def cover(movie_item) do
-    movie_item
-    |> Floki.find("img")
-    |> Floki.attribute("src")
-    |> hd
-  end
-
-  def get_rating(rating_str) do
-    to_integer(rating_str)
-  end
-
-  def comment(movie_item) do
-    movie_item
-    |> Floki.find(".comment")
-    |> Floki.text(deep: false)
-  end
-
-  def parse_content(url) do
-    HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]])
-    |> get_resp
-    |> elem(1)
-  end
-
-  defp get_resp({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
-    Floki.parse_document(body)
-  end
-
-  defp get_resp(_) do
-    Floki.parse_document("")
-  end
-
-  def mute_output(_) do
-  end
-
-  def decr(num), do: num - 1
 end
