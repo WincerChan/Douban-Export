@@ -16,31 +16,28 @@ defmodule DoubanShow.Persist do
     :rating,
     :comment
   ]
-  def do_save(item) do
-    [@table | item]
-    |> List.to_tuple()
-    |> Mnesia.write()
-  end
-
   def save_record(record) do
     GenServer.cast(__MODULE__, {:save, record})
   end
 
   def get_record(key) do
-    GenServer.cast(__MODULE__, {:get, key})
+    GenServer.call(__MODULE__, {:get, key})
   end
 
   # save record
   def handle_cast({:save, record}, state) do
+    # could use spawn
     Mnesia.transaction(fn ->
-      do_save(record)
+      [@table | record]
+      |> List.to_tuple()
+      |> Mnesia.write()
     end) |> IO.inspect
 
     {:noreply, state}
   end
 
   # get record, now unused
-  def handle_cast({:get, key}, _, state) do
+  def handle_call({:get, key}, _, state) do
     data =
     case Mnesia.dirty_read(@table, key) do
       [data | _] -> data
@@ -51,6 +48,7 @@ defmodule DoubanShow.Persist do
   end
 
   def start_link(_) do
+    IO.puts("Starting mnesia...")
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 

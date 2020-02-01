@@ -20,7 +20,7 @@ defmodule DoubanShow do
   end
 
   def init(_) do
-    send(self(), :real_init)
+    # send(self(), :real_init)
     IO.inspect(self())
     {:ok, nil}
   end
