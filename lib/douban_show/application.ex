@@ -11,7 +11,7 @@ defmodule DoubanShow.Application do
       # {DoubanShow.Worker, arg}
       DoubanShow.Persist,
       DoubanShow,
-      DoubanMetrics
+      DoubanTask
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
