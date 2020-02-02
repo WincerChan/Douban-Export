@@ -1,24 +1,12 @@
 defmodule DoubanShow.Movie do
-  import DoubanShow
-  use GenServer
+  import Tool
 
   @internel 15
   @url_prefix "https://movie.douban.com/people"
   @douban_id Application.get_env(:douban_show, :doubanid)
 
-  def start_link(state) do
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
-  end
-
   def concat_url(num) do
     "#{@url_prefix}/#{@douban_id}/collect?start=#{num * @internel}"
-  end
-
-  def fetch(url) do
-    url
-    |> parse_content
-    |> Floki.find(".item")
-    |> Enum.map(&parse/1)
   end
 
   def date(movie_item) do
@@ -45,30 +33,29 @@ defmodule DoubanShow.Movie do
   end
 
   def parse(m) do
-    DoubanItem.new()
-    |> DoubanItem.put(comment(m))
-    |> DoubanItem.put(rating(m))
-    |> DoubanItem.put(cover(m))
-    |> DoubanItem.put(title(m))
-    |> DoubanItem.put(tags(m))
-    |> DoubanItem.put(date(m))
-    |> DoubanItem.put(url(m))
-    |> DoubanItem.put("movie")
-    |> DoubanItem.make_id()
+    {:ok, pid} = DoubanItem.new()
+
+    DoubanItem.put(pid, comment(m))
+    DoubanItem.put(pid, rating(m))
+    DoubanItem.put(pid, cover(m))
+    DoubanItem.put(pid, title(m))
+    DoubanItem.put(pid, tags(m))
+    DoubanItem.put(pid, date(m))
+    DoubanItem.put(pid, url(m))
+    DoubanItem.put(pid, "book")
+    DoubanItem.identify(pid)
+
+    DoubanItem.get(pid)
     |> DoubanShow.Persist.save_record()
   end
 
-  def start do
-    0..fetch_pages("movie")
-    |> Stream.map(&concat_url/1)
-    |> Enum.map(&Task.async(fn -> fetch(&1) end))
-    |> Task.yield_many()
-  end
+  def fetch(page) do
+    with url <- concat_url(page) do
+      parse_content(url)
+      |> Floki.find(".item")
+      |> Enum.map(&parse/1)
 
-  def init(state) do
-    IO.puts("Starting...")
-    start()
-    IO.puts("Done.")
-    {:ok, state}
+      IO.puts("URL: #{url} Done.")
+    end
   end
 end

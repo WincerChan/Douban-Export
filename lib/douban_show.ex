@@ -12,80 +12,38 @@ defmodule DoubanShow do
       :world
 
   """
-  @douban_id Application.get_env(:douban_show, :doubanid)
-  def concat_url_by_type(category) do
-    "https://#{category}.douban.com/people/#{@douban_id}/collect"
+  use GenServer
+
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    # GenServer.start(DoubanShow, nil)
   end
 
-  def fetch_pages(category) do
-    concat_url_by_type(category)
-    |> parse_content
-    |> Floki.find(".paginator > a:last-of-type")
-    |> Floki.text(deep: false)
-    |> to_integer
-    |> decr
+  def init(_) do
+    {:ok, nil}
   end
 
-  defp to_integer(nil) do
-    0
+  def collect(server_pid, {category, page}) do
+    GenServer.call(server_pid, {:douban_process, category, page})
   end
 
-  defp to_integer("") do
-    0
-  end
+  def handle_call({:douban_process, category, page}, caller, state) do
+    spawn(fn ->
+      module =
+        case category do
+          :movie ->
+            DoubanShow.Movie
 
-  defp to_integer(str) do
-    String.to_integer(str)
-  end
+          :book ->
+            DoubanShow.Book
+        end
 
-  def url(movie_item) do
-    movie_item
-    |> Floki.find(".nbg")
-    |> Floki.attribute("href")
-    |> Floki.text(deep: false)
-  end
+      module.fetch(page)
 
-  def tags(movie_item) do
-    movie_item
-    |> Floki.find(".tags")
-    |> Floki.text(deep: false)
-    |> String.split(" ")
-    |> tl
-  end
+      # responds from spawn process
+      GenServer.reply(caller, {:ok, page})
+    end)
 
-  def cover(movie_item) do
-    movie_item
-    |> Floki.find("img")
-    |> Floki.attribute("src")
-    |> hd
+    {:noreply, state}
   end
-
-  def get_rating(rating_str) do
-    to_integer(rating_str)
-  end
-
-  def comment(movie_item) do
-    movie_item
-    |> Floki.find(".comment")
-    |> Floki.text(deep: false)
-  end
-
-  def parse_content(url) do
-    HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]])
-    |> get_resp
-    |> elem(1)
-  end
-
-  defp get_resp({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
-    Floki.parse_document(body)
-  end
-
-  defp get_resp(_) do
-    Floki.parse_document("")
-  end
-
-  def mute_output(_) do
-  end
-
-  def decr(num), do: num - 1
 end
