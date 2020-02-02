@@ -59,8 +59,4 @@ defmodule DoubanShow.Persist do
 
     {:ok, nil}
   end
-
-  def close do
-    Mnesia.stop()
-  end
 end
