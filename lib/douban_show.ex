@@ -43,15 +43,13 @@ defmodule DoubanShow do
   # 但是这个 pid 是一个 process，通过 cast 来接受 url
   def handle_call({:douban_process, category, page}, caller, state) do
     spawn(fn ->
-      {module, pid} = case category do
+      module = case category do
         :movie ->
-          {:ok, movie_pid} = DoubanShow.Movie.start
-          {DoubanShow.Movie, movie_pid}
+          DoubanShow.Movie
         :book ->
-          {:ok, book_pid} = DoubanShow.Book.start
-          {DoubanShow.Book, book_pid}
+          DoubanShow.Book
       end
-      module.fetch({pid, page})
+      module.fetch(page)
 
       # responds from spawn process
       GenServer.reply(caller, {:ok, page})
@@ -59,10 +57,4 @@ defmodule DoubanShow do
     {:noreply, state}
   end
 
-  def handle_cast({:page, {module, pid}, num}, state) do
-    spawn(fn ->
-      module.fetch({pid, num})
-    end)
-    {:noreply, state}
-  end
 end
