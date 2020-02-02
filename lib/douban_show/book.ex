@@ -1,14 +1,15 @@
 defmodule DoubanShow.Book do
-  import DoubanShow
+  import Tool
   use GenServer
 
   @internel 15
   @url_prefix "https://book.douban.com/people"
   @douban_id Application.get_env(:douban_show, :doubanid)
 
-  def start_link(state) do
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
-  end
+  # def start_link(_) do
+  #   IO.puts("Starting collecting Douban user #{@douban_id}'s books")
+  #   GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  # end
 
   def concat_url(num) do
     "#{@url_prefix}/#{@douban_id}/collect?start=#{num * @internel}"
@@ -47,38 +48,43 @@ defmodule DoubanShow.Book do
   end
 
   def parse(m) do
-    DoubanItem.new()
-    |> DoubanItem.put(comment(m))
-    |> DoubanItem.put(rating(m))
-    |> DoubanItem.put(cover(m))
-    |> DoubanItem.put(title(m))
-    |> DoubanItem.put(tags(m))
-    |> DoubanItem.put(date(m))
-    |> DoubanItem.put(url(m))
-    |> DoubanItem.put("book")
-    |> DoubanItem.make_id()
-    |> DoubanShow.Persist.save_record()
+    {:ok, pid} = DoubanItem.new()
+
+    DoubanItem.put(pid, comment(m))
+    DoubanItem.put(pid, rating(m))
+    DoubanItem.put(pid, cover(m))
+    DoubanItem.put(pid, title(m))
+    DoubanItem.put(pid, tags(m))
+    DoubanItem.put(pid, date(m))
+    DoubanItem.put(pid, url(m))
+    DoubanItem.put(pid, "book")
+    DoubanItem.identify(pid)
+
+    DoubanItem.get(pid)
+    |> DoubanShow.Persist.save_record
   end
 
-  def fetch(url) do
+  def fetch({pid, num}) do
+    url = concat_url(num)
+    GenServer.cast(pid, {:get, url})
+  end
+
+  def handle_cast({:get, url}, state) do
     url
     |> parse_content
     |> Floki.find(".subject-item")
     |> Enum.map(&parse/1)
+    IO.puts("URL #{url} Done.")
+    {:noreply, state}
   end
 
   def start do
-    0..fetch_pages("book")
-    |> Stream.map(&concat_url/1)
-    |> Enum.map(&Task.async(fn -> fetch(&1) end))
-    |> Task.yield_many()
+    GenServer.start(DoubanShow.Book, nil)
   end
 
   def init(state) do
-    IO.puts("Starting...")
-    start()
-    DoubanShow.Persist.close()
-    IO.puts("Done.")
+    # start()
+    # DoubanShow.Persist.close()
     {:ok, state}
   end
 end
