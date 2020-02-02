@@ -55,7 +55,7 @@ defmodule DoubanShow.Book do
     DoubanItem.identify(pid)
 
     DoubanItem.get(pid)
-    |> DoubanShow.Persist.save_record
+    |> DoubanShow.Persist.save_record()
   end
 
   def fetch(page) do
@@ -63,6 +63,7 @@ defmodule DoubanShow.Book do
       parse_content(url)
       |> Floki.find(".subject-item")
       |> Enum.map(&parse/1)
+
       IO.puts("URL: #{url} done.")
     end
   end

@@ -46,7 +46,7 @@ defmodule DoubanShow.Movie do
     DoubanItem.identify(pid)
 
     DoubanItem.get(pid)
-    |> DoubanShow.Persist.save_record
+    |> DoubanShow.Persist.save_record()
   end
 
   def fetch(page) do
@@ -54,6 +54,7 @@ defmodule DoubanShow.Movie do
       parse_content(url)
       |> Floki.find(".item")
       |> Enum.map(&parse/1)
+
       IO.puts("URL: #{url} Done.")
     end
   end

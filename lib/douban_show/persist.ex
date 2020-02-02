@@ -39,10 +39,10 @@ defmodule DoubanShow.Persist do
   # get record, now unused
   def handle_call({:get, key}, _, state) do
     data =
-    case Mnesia.dirty_read(@table, key) do
-      [data | _] -> data
-      _ -> nil
-    end
+      case Mnesia.dirty_read(@table, key) do
+        [data | _] -> data
+        _ -> nil
+      end
 
     {:reply, data, state}
   end

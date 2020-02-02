@@ -29,18 +29,21 @@ defmodule DoubanShow do
 
   def handle_call({:douban_process, category, page}, caller, state) do
     spawn(fn ->
-      module = case category do
-        :movie ->
-          DoubanShow.Movie
-        :book ->
-          DoubanShow.Book
-      end
+      module =
+        case category do
+          :movie ->
+            DoubanShow.Movie
+
+          :book ->
+            DoubanShow.Book
+        end
+
       module.fetch(page)
 
       # responds from spawn process
       GenServer.reply(caller, {:ok, page})
     end)
+
     {:noreply, state}
   end
-
 end

@@ -32,7 +32,8 @@ defmodule DoubanItem do
   def handle_cast({:identify}, inst) do
     case String.printable?(inst |> hd) do
       true -> {:noreply, [id(inst) | inst]}
-      false -> {:noreply, inst}  # already indentified
+      # already indentified
+      false -> {:noreply, inst}
     end
   end
 
