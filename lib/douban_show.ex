@@ -20,27 +20,13 @@ defmodule DoubanShow do
   end
 
   def init(_) do
-    # send(self(), :real_init)
     {:ok, nil}
   end
 
-  def handle_info(:real_init, _) do
-    IO.puts("START")
-    # 奇怪，本应该运行这个的，但是似乎直接 start 之后就结束了
-    start_collect(self(), {:book, 0})
-  end
-
-  def start_collect(server_pid, {category, page}) do
+  def collect(server_pid, {category, page}) do
     GenServer.call(server_pid, {:douban_process, category, page})
   end
 
-  def start_fetch(server_pid, {module_info, num}) do
-    GenServer.cast(server_pid, {:page, module_info, num})
-  end
-
-  # 这个地方应该接受两个参数：category（book or movie），page（0，1，2）
-  # 这个地方应该还是一个参数，返回一个 pid，
-  # 但是这个 pid 是一个 process，通过 cast 来接受 url
   def handle_call({:douban_process, category, page}, caller, state) do
     spawn(fn ->
       module = case category do

@@ -31,7 +31,7 @@ defmodule DoubanShow.Persist do
       [@table | record]
       |> List.to_tuple()
       |> Mnesia.write()
-    end) |> IO.inspect
+    end)
 
     {:noreply, state}
   end
