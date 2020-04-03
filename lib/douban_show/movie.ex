@@ -42,7 +42,7 @@ defmodule DoubanShow.Movie do
     DoubanItem.put(pid, tags(m))
     DoubanItem.put(pid, date(m))
     DoubanItem.put(pid, url(m))
-    DoubanItem.put(pid, "book")
+    DoubanItem.put(pid, "movie")
     DoubanItem.identify(pid)
 
     DoubanItem.get(pid)
