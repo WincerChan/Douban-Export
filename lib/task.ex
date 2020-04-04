@@ -36,6 +36,8 @@ defmodule DoubanTask do
     Task.await(movie_task)
 
     IO.puts("\nAll Collected successed.")
+    IO.puts("Now starting draw collected items...")
+    Show.start
     System.stop()
   end
 end
