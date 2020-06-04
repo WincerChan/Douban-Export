@@ -37,6 +37,6 @@ defmodule DoubanItem do
   end
 
   defp id(item) do
-    :crypto.hash(:sha3_256, inspect(item))
+    :crypto.hash(:sha256, inspect(item))
   end
 end
