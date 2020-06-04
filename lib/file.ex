@@ -1,7 +1,7 @@
 defmodule LifeFile do
     use GenServer
 
-    @filepath "/Users/wincer/Projects/MyBlog/source/life/index.md"
+    @filepath "./index.md"
     @text """
     ---
     title: 生活
