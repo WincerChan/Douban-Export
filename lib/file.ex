@@ -49,7 +49,7 @@ defmodule LifeFile do
         case operation do
           {:put, value}   ->
             inst |> IO.binwrite(value)
-          {:close, _} -> 
+          {:close} -> 
             inst |> File.close
         end
         
