@@ -21,20 +21,19 @@ defmodule DoubanItem do
     GenServer.cast(pid, {:identify})
   end
 
-  def handle_cast({:put, value}, inst) do
-    {:noreply, [value | inst]}
+  def handle_cast(value, inst) do
+    case value do
+      {:put, value} -> {:noreply, [value | inst]}
+      {:identify} -> case String.printable?(inst |> hd) do
+        true -> {:noreply, [id(inst) | inst]}
+        # already indentified
+        false -> {:noreply, inst}
+      end
+    end
   end
 
   def handle_call({:get}, _, inst) do
     {:reply, inst, inst}
-  end
-
-  def handle_cast({:identify}, inst) do
-    case String.printable?(inst |> hd) do
-      true -> {:noreply, [id(inst) | inst]}
-      # already indentified
-      false -> {:noreply, inst}
-    end
   end
 
   defp id(item) do
