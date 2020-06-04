@@ -40,7 +40,7 @@ defmodule Show do
     |> Stream.map(&draw/1)
     |> Enum.to_list()
     {:ok, file_pid} = @lifefile
-    file_pid |> LifeFile.put("{% endstream %}")
+    file_pid |> LifeFile.put("{% endstream %}\n")
     file_pid |> LifeFile.close
   end
 end
