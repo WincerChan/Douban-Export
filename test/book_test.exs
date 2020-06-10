@@ -69,33 +69,33 @@ defmodule BookTest do
                  ]}
               ]}
 
-  test "get book date" do
+  test "test book date" do
     assert DoubanShow.Book.date(@book_item) == "2019-08-31"
   end
 
-  test "get movie rating" do
+  test "test book rating" do
     assert DoubanShow.Book.rating(@book_item) == 4
   end
 
-  test "get movie title" do
+  test "test movie title" do
     assert DoubanShow.Book.title(@book_item) == "暴力 : 一种微观社会学理论 "
   end
 
-  test "get movie url" do
-    assert DoubanShow.url(@book_item) == "https://book.douban.com/subject/26810502/"
+  test "test movie url" do
+    assert Tool.url(@book_item) == "https://book.douban.com/subject/26810502/"
   end
 
-  test "get movie tags" do
-    assert DoubanShow.tags(@book_item) == []
+  test "text booka tags" do
+    assert Tool.tags(@book_item) == []
   end
 
   test "test movie cover" do
-    assert DoubanShow.cover(@book_item) ==
+    assert Tool.cover(@book_item) ==
              "https://img3.doubanio.com/view/subject/m/public/s28857893.jpg"
   end
 
   test "test movie comment" do
-    assert DoubanShow.comment(@book_item) == "\n      没有暴力的个体，只有暴力的情境\n      \n  \n\n  "
+    assert Tool.comment(@book_item) == "\n      没有暴力的个体，只有暴力的情境\n      \n  \n\n  "
   end
 
   test "test concat_url" do

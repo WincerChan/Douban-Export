@@ -69,20 +69,20 @@ defmodule MovieTest do
   end
 
   test "get movie url" do
-    assert DoubanShow.url(@movie_item) == "https://movie.douban.com/subject/2999500/"
+    assert Tool.url(@movie_item) == "https://movie.douban.com/subject/2999500/"
   end
 
   test "get movie tags" do
-    assert DoubanShow.tags(@movie_item) == ["韩国", "犯罪", "惊悚"]
+    assert Tool.tags(@movie_item) == ["韩国", "犯罪", "惊悚"]
   end
 
   test "test movie cover" do
-    assert DoubanShow.cover(@movie_item) ==
+    assert Tool.cover(@movie_item) ==
              "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p642667992.jpg"
   end
 
   test "test movie comment" do
-    assert DoubanShow.comment(@movie_item) == "最后的反转好评，大快人心；只是前戏稍有些乏。"
+    assert Tool.comment(@movie_item) == "最后的反转好评，大快人心；只是前戏稍有些乏。"
   end
 
   test "test concat_url" do
