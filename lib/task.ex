@@ -3,20 +3,24 @@ defmodule DoubanTask do
 
   def start_link(_arg), do: Task.start_link(&start/0)
 
-  defp book(pid) do
+  def book(pid) do
     IO.puts("Start collecting books.")
-    0..Tool.fetch_pages(:book)
+
+    Tool.enumerate_pages(:book)
     |> Enum.map(
       &Task.async(fn ->
         DoubanShow.collect(pid, {:book, &1})
       end)
     )
     |> Task.yield_many()
+
+    IO.puts("End collecting book.")
   end
 
-  defp movie(pid) do
+  def movie(pid) do
     IO.puts("Start collecting movies.")
-    0..Tool.fetch_pages(:movie)
+
+    Tool.enumerate_pages(:movie)
     |> Enum.map(
       &Task.async(fn ->
         DoubanShow.collect(pid, {:movie, &1})
@@ -37,7 +41,7 @@ defmodule DoubanTask do
 
     IO.puts("\nAll Collected successed.")
     IO.puts("Now starting draw collected items...")
-    Show.start
+    Show.start()
     System.stop()
   end
 end

@@ -16,10 +16,12 @@ defmodule DoubanShow.Persist do
     :rating,
     :comment
   ]
+  @spec save_record(list) :: :ok
   def save_record(record) do
     GenServer.cast(__MODULE__, {:save, record})
   end
 
+  @spec get_record(binary) :: any
   def get_record(key) do
     GenServer.call(__MODULE__, {:get, key})
   end

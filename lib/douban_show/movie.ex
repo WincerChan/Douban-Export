@@ -49,6 +49,7 @@ defmodule DoubanShow.Movie do
     |> DoubanShow.Persist.save_record()
   end
 
+  @spec fetch(number) :: :ok
   def fetch(page) do
     with url <- concat_url(page) do
       parse_content(url)
