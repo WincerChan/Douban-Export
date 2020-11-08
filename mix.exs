@@ -28,7 +28,8 @@ defmodule DoubanShow.MixProject do
       {:postgrex, "~> 0.15.3"},
       {:jason, "~> 1.1"},
       {:httpoison, "~> 1.6"},
-      {:floki, "~> 0.24.0"}
+      {:floki, "~> 0.24.0"},
+      {:hackney, github: "benoitc/hackney", override: true}
     ]
   end
 end

@@ -1,6 +1,6 @@
 defmodule Show do
   alias :mnesia, as: Mnesia
-  @lifefile LifeFile.new
+  @lifefile LifeFile.new()
 
   def init do
     Mnesia.start()
@@ -27,9 +27,12 @@ defmodule Show do
     [_, category, url, date, _, title, cover, _, _] = item
     {:ok, file_pid} = @lifefile
 
-    fmt_str = "{% figure '#{cover}' '#{title}' '#{url}' '#{
-      date <> if category == "book", do: " 读过", else: " 看过"
-    }' %}\n"
+    fmt_str =
+      "{{< image-stream \"#{url}\" \"#{title}\" \"#{cover}\" \"#{
+        date <> if category == "book", do: " 读过", else: " 看过"
+      }\" >}}\n"
+      |> IO.inspect()
+
     LifeFile.put(file_pid, fmt_str)
   end
 
@@ -39,8 +42,10 @@ defmodule Show do
     get_this_year()
     |> Stream.map(&draw/1)
     |> Enum.to_list()
+    |> IO.inspect()
+
     {:ok, file_pid} = @lifefile
-    file_pid |> LifeFile.put("{% endstream %}\n")
-    file_pid |> LifeFile.close
+    file_pid |> LifeFile.put("{{< /grid >}}\n")
+    file_pid |> LifeFile.close()
   end
 end

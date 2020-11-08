@@ -55,7 +55,7 @@ defmodule Tool do
 
   def parse_content(url),
     do:
-      HTTPoison.get(url, %{}, hackney: [cookie: ["bid=FMmHbs6EbzY"]])
+      HTTPoison.get(url, %{}, hackney: [cookie: ["bid=jKc6sadczmE"]])
       |> get_resp
       |> elem(1)
 
