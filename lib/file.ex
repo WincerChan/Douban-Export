@@ -16,7 +16,7 @@ defmodule LifeFile do
 
   我不愿在工作上耗费太多精力（我并没有把写代码当成一份工作），因为对我来说，生命中显然有比工作更加重要的事，比如——好好生活。
 
-  {{< grid >}}
+  {{< grid "life" >}}
   """
   def new do
     GenServer.start(__MODULE__, nil)
